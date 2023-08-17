@@ -1,4 +1,4 @@
-from schema_validator import SchemaValidator
+from .schema_validator import SchemaValidator
 from datetime import datetime
 import csv
 

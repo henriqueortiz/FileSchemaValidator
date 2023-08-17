@@ -13,6 +13,7 @@ class SchemaValidator():
             schemafile (list): List of dictionaries representing column schema.
         """
         self.schemafile = schemafile
+        self.schema_errors = {}
     
     @property
     def schemafile(self):
@@ -27,28 +28,31 @@ class SchemaValidator():
     @schemafile.setter
     def schemafile(self, schema):
         """
-        Sets the schema list and validates its information.
+        Sets the schema dictionary and validates its information.
 
         Args:
-            schema (list): List of dictionaries representing column schema.
+            schema (dict): Dictionary representing column schema.
 
         Raises:
-            ValueError: If the schema is not a valid list or if schema information is invalid.
+            ValueError: If the schema is not a valid dictionary or if schema information is invalid.
         """
-        if not isinstance(schema, list):
-            raise ValueError("Schema must be a list.")
+        if not isinstance(schema, dict):
+            raise ValueError("Schema must be a dictionary.")
         
-        valid_types = ["int", "string", "float", "timestamp", "date", "boolean"]
-        valid_modes = ["REQUIRED", "NULLABLE"]
+        valid_types = ["int", "string", "float", "timestamp", "date", "bool"]
+        valid_modes = [True, False]
+        required_format = ['date', 'timestamp']
 
-        for column_info in schema:
+        for column_name, column_info in schema.items():
             if not isinstance(column_info, dict):
-                raise ValueError("Schema must be a list of dictionaries.")
-            if "name" not in column_info or "type" not in column_info or "mode" not in column_info:
-                raise ValueError("Schema must contain 'name', 'type', and 'mode' keys for each column.")
-            if column_info["mode"] not in valid_modes:
-                raise ValueError("Invalid mode value in schema. Use 'REQUIRED' or 'OPTIONAL'.")
+                raise ValueError(f"Column {column_name} info must be a dictionary.")
+            if "type" not in column_info or "is_required" not in column_info:
+                raise ValueError(f"Column {column_name} info must contain 'type' and 'is_required' keys.")
             if column_info["type"] not in valid_types:
-                raise ValueError(f"Invalid data type in schema. Use {','.join(valid_types)}")
+                raise ValueError(f"Invalid data type in schema of Column {column_name}. Use {','.join(valid_types)}")
+            if column_info["is_required"] not in valid_modes:
+                raise ValueError(f"Invalid 'is_required' value in schema of Column {column_name}. Use {','.join(valid_modes)}")
+            if column_info["type"] in required_format and 'format' not in column_info:
+                raise ValueError(f"Column of type {column_info['type']} info must contain 'format' keys")
     
         self._schemafile = schema
