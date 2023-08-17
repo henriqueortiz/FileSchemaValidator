@@ -19,7 +19,6 @@ class CsvSchemaValidator(SchemaValidator):
         """
         super().__init__(schemafile)
         self.reader = csv_reader
-        self.values = [row for row in self.reader]
         self.validate_columns_errors = None
         self.validate_columns_warnings = None
         self.validate_rows_errors = {}
@@ -80,22 +79,23 @@ class CsvSchemaValidator(SchemaValidator):
     def type_validation(self, schema, value, column):
         data_type = schema['type']
         try:
-            if data_type == 'int':
-                int(value)
-            elif data_type == 'float':
-                float(value)
-            elif data_type == 'string':
-                str(value)
-            elif data_type == 'date':
-                datetime.strptime(value, schema['format'])
-            elif data_type == 'timestamp':
-                datetime.strptime(value, schema['format'])
-            elif data_type == 'bool':
-                if value not in [0, 1, 'true', 'false', '0', '1']:
-                    if not self.validate_rows_errors.get(str(self.row_counter)):
-                        self.validate_rows_errors[str(self.row_counter)] = [f'{column}: Boolean field must be True or False.']
-                    else:
-                        self.validate_rows_errors[str(self.row_counter)].append(f'{column}: Boolean field must be True or False.')
+            if value:
+                if data_type == 'int':
+                    int(value)
+                elif data_type == 'float':
+                    float(value)
+                elif data_type == 'string':
+                    str(value)
+                elif data_type == 'date':
+                    datetime.strptime(value, schema['format'])
+                elif data_type == 'timestamp':
+                    datetime.strptime(value, schema['format'])
+                elif data_type == 'bool':
+                    if value not in [0, 1, 'true', 'false', '0', '1']:
+                        if not self.validate_rows_errors.get(str(self.row_counter)):
+                            self.validate_rows_errors[str(self.row_counter)] = [f'{column}: Boolean field must be True or False.']
+                        else:
+                            self.validate_rows_errors[str(self.row_counter)].append(f'{column}: Boolean field must be True or False.')
         except Exception as e:
             if not self.validate_rows_errors.get(str(self.row_counter)):
                 self.validate_rows_errors[str(self.row_counter)] = [f'{column}: {str(e)}']
@@ -110,7 +110,7 @@ class CsvSchemaValidator(SchemaValidator):
             ValueError: If row data does not comply with the schema.
         """
         self.row_counter=0
-        for row in self.values:
+        for row in self.reader:
             for column in list(row.keys()):
                 schema = self.schemafile.get(column)
                 if schema:
@@ -122,7 +122,7 @@ class CsvSchemaValidator(SchemaValidator):
             self.row_counter += 1       
         
         if self.validate_rows_errors:
-            raise Exception('\n'.join('{}\t{}'.format(k, v) for k, v in self.validate_rows_errors.items()))
+            raise Exception(f'{len(self.validate_rows_errors)} errors were found. Check validate_rows_errors attribute.')
         else:
             print('validateRows completed successfully.')
             return True
