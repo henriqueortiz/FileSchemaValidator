@@ -10,7 +10,7 @@ class SchemaValidator():
         Initializes the SchemaValidator class.
 
         Args:
-            schemafile (list): List of dictionaries representing column schema.
+            schemafile (dict): Dictionary representing column schema.
         """
         self.schemafile = schemafile
         self.schema_errors = {}
@@ -18,10 +18,10 @@ class SchemaValidator():
     @property
     def schemafile(self):
         """
-        Accessor for the schema list.
+        Accessor for the schema dict.
 
         Returns:
-            list: List of dictionaries representing column schema.
+            dict: Dictionary representing column schema.
         """
         return self._schemafile
 
@@ -40,7 +40,7 @@ class SchemaValidator():
             raise ValueError("Schema must be a dictionary.")
         
         valid_types = ["int", "string", "float", "timestamp", "date", "bool"]
-        valid_modes = [True, False]
+        valid_modes = [0, 1]
         required_format = ['date', 'timestamp']
 
         for column_name, column_info in schema.items():
