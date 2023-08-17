@@ -45,14 +45,14 @@ class SchemaValidator():
 
         for column_name, column_info in schema.items():
             if not isinstance(column_info, dict):
-                raise ValueError(f"Column {column_name} info must be a dictionary.")
+                raise ValueError(f"Column {column_name} must be a dictionary.")
             if "type" not in column_info or "is_required" not in column_info:
-                raise ValueError(f"Column {column_name} info must contain 'type' and 'is_required' keys.")
+                raise ValueError(f"Column {column_name} must contain 'type' and 'is_required' keys.")
             if column_info["type"] not in valid_types:
-                raise ValueError(f"Invalid data type in schema of Column {column_name}. Use {','.join(valid_types)}")
+                raise ValueError(f"Invalid data type in schema of Column {column_name}. Use True or False.")
             if column_info["is_required"] not in valid_modes:
                 raise ValueError(f"Invalid 'is_required' value in schema of Column {column_name}. Use {','.join(valid_modes)}")
             if column_info["type"] in required_format and 'format' not in column_info:
-                raise ValueError(f"Column of type {column_info['type']} info must contain 'format' keys")
+                raise ValueError(f"Column of type {column_info['type']} must contain 'format' keys")
     
         self._schemafile = schema

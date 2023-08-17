@@ -21,6 +21,8 @@ class CsvSchemaValidator(SchemaValidator):
         super().__init__(schemafile)
         self.reader = csv_reader
         self.values = [row for row in self.reader]
+        self.validate_columns_errors = []
+        self.validate_rows_errors = {}
 
     @property
     def csv_reader(self):
@@ -54,13 +56,16 @@ class CsvSchemaValidator(SchemaValidator):
         Raises:
             Exception: If a required column is not found in the CSV.
         """
-        for c in self.schemafile:
-            if c.get("name") not in self.reader.fieldnames:
-                raise Exception(f'{c.get("name")} column is required but was not found.')
+        for c in self.schemafile.keys():
+            print(c)
+            if c not in self.reader.fieldnames:
+                self.validate_columns_errors.append(f'{c} Column is required but was not found.')
             else:
                 print('validateColumns completed successfully.')
                 return True
-
+        if self.validate_columns_errors:
+            raise Exception(self.validate_columns_errors)
+    
     def validate_rows(self):
         """
         Validates the data in the CSV rows according to the schema.
