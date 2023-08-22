@@ -65,9 +65,6 @@ class CsvSchemaValidator(SchemaValidator):
         elif extra_columns:
             self.validate_columns_warnings = [f'{c} Column is not in the SchemaFile and will not be processed, consider removing the Column.' for c in extra_columns]
             warnings.warn('\n '.join(self.validate_columns_warnings))
-        else:
-            print('validate_columns completed successfully.')
-            return True
         
     def required_validation(self, schema, value, column):
         if schema['is_required'] and not value:
@@ -123,6 +120,3 @@ class CsvSchemaValidator(SchemaValidator):
         
         if self.validate_rows_errors:
             raise Exception(f'{len(self.validate_rows_errors)} errors were found. Check validate_rows_errors attribute.')
-        else:
-            print('validateRows completed successfully.')
-            return True
