@@ -95,6 +95,31 @@ class TestCsvSchemaValidator():
             print(validator.validate_columns_errors)
             print(validator.validate_rows_errors)
 
+    def test_format_error(self):
+        print("\nRunning format-error test...")
+        csv_buffer = open('./fileschemavalidator/test-files/format-error.csv', encoding='utf8')
+        csv_reader = csv.DictReader(csv_buffer, delimiter=';')
+        validator = CsvSchemaValidator(SCHEMA, csv_reader)
+        try:
+            validator.validate_columns()
+            validator.validate_rows()
+        except Exception as e:
+            print(validator.validate_columns_errors)
+            print(validator.validate_rows_errors)
+
+    def test_float_error(self):
+        print("\nRunning float-error test...")
+        csv_buffer = open('./fileschemavalidator/test-files/float-error.csv', encoding='utf8')
+        csv_reader = csv.DictReader(csv_buffer, delimiter=';')
+        validator = CsvSchemaValidator(SCHEMA, csv_reader)
+        try:
+            validator.validate_columns()
+            validator.validate_rows()
+        except Exception as e:
+            print(validator.validate_columns_errors)
+            print(validator.validate_rows_errors)
+
+
 if __name__=='__main__':
     test = TestCsvSchemaValidator()
     try:
@@ -119,5 +144,13 @@ if __name__=='__main__':
         print(e)
     try:
         test.test_bool_error()
+    except Exception as e:
+        print(e)
+    try:
+        test.test_format_error()
+    except Exception as e:
+        print(e)
+    try:
+        test.test_float_error()
     except Exception as e:
         print(e)
