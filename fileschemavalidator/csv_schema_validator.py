@@ -88,11 +88,11 @@ class CsvSchemaValidator(SchemaValidator):
                 elif data_type == 'timestamp':
                     datetime.strptime(value, schema['format'])
                 elif data_type == 'bool':
-                    if value not in [0, 1, 'true', 'false', '0', '1']:
+                    if value not in [0, 1, '0', '1']:
                         if not self.validate_rows_errors.get(str(self.row_counter)):
-                            self.validate_rows_errors[str(self.row_counter)] = [f'{column}: Boolean field must be True or False.']
+                            self.validate_rows_errors[str(self.row_counter)] = [f'{column}: Boolean field must be 0 or 1.']
                         else:
-                            self.validate_rows_errors[str(self.row_counter)].append(f'{column}: Boolean field must be True or False.')
+                            self.validate_rows_errors[str(self.row_counter)].append(f'{column}: Boolean field must be 0 or 1.')
         except Exception as e:
             if not self.validate_rows_errors.get(str(self.row_counter)):
                 self.validate_rows_errors[str(self.row_counter)] = [f'{column}: {str(e)}']
